@@ -76,8 +76,6 @@ def prepare_for_text_to_speech(text : str):
 def get_filename(input : str):
     return "ip_it_ge_" + base64.b32encode(hashlib.md5(input.encode("UTF-8")).digest()).decode("ASCII")[:16] + ".mp3"
 
-EXCEL_PATH = r"H:\My Drive\ItalienischVokabeln.xlsx"
-
 df = pd.read_excel(EXCEL_PATH)
 df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
 df.replace('', np.nan, inplace=True)
