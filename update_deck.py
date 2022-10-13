@@ -131,6 +131,5 @@ if __name__ == "__main__":
 
     df_to_export = pd.DataFrame(rows, columns=["ID", "Front", "Back"])
 
-    filepath_for_anki_import = "for_anki.csv"
-    df_to_export.to_csv(filepath_for_anki_import, sep="\t", header=False, index=False)
+    df_to_export.to_csv(OUTPUT_CSV_PATH_FOR_ANKI, sep="\t", header=False, index=False)
     print("Finished")
