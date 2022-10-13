@@ -1,5 +1,9 @@
 {
     "excel_path": "H:\\My Drive\\ItalienischVokabeln.xlsx",
     "csv_for_anki_import": "for_anki.csv",
-	"audio_file_output": "%APPDATA%\\Anki2\\User 1\\collection.media"
+	"audio_file_output": "%APPDATA%\\Anki2\\User 1\\collection.media",
+	"abbreviations": {
+		"qc.": "qualcosa",
+		"qcn.": "qualcuno"
+	}
 }
