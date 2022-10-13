@@ -18,6 +18,7 @@ settingsdict = json.load(open("settings.json", "r"))
 EXCEL_PATH = resolve_path(settingsdict["excel_path"])
 OUTPUT_CSV_PATH_FOR_ANKI = resolve_path(settingsdict["csv_for_anki_import"])
 AUDIO_OUTPUT_FOLDER = resolve_path(settingsdict["audio_file_output"])
+abbreviations = settingsdict["abbreviations"]
 
 def get_access_token():
     command = "gcloud auth application-default print-access-token"
@@ -68,6 +69,10 @@ def text_to_speech(input_text : str, output_path : str, access_token : str, voic
 
 def prepare_for_text_to_speech(text : str):
     text = re.sub(r"\[[^\]]*\]", "", text)
+    
+    for abbr, repl in abbreviations.items():
+        text = text.replace(abbr, repl)
+    
     text = re.sub(r"\/", r" / ", text)
     text = re.sub(r"\s+", " ", text)
     text = text.strip()
@@ -76,33 +81,57 @@ def prepare_for_text_to_speech(text : str):
 def get_filename(input : str):
     return "ip_it_ge_" + base64.b32encode(hashlib.md5(input.encode("UTF-8")).digest()).decode("ASCII")[:16] + ".mp3"
 
-df = pd.read_excel(EXCEL_PATH)
-df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
-df.replace('', np.nan, inplace=True)
-df.dropna(inplace=True)
-df["ID"] = df["ID"].map(int)
-df["ToRead"] = df["Italienisch"].map(prepare_for_text_to_speech)
-df["Filename"] = df["ToRead"].map(get_filename)
+def get_german_card_content(row):
+    return row["Deutsch"]
 
-os.makedirs(AUDIO_OUTPUT_FOLDER, exist_ok=True)
+def get_italian_card_content(row):
+    return f"""{row["Italienisch"]} [sound:{row["Filename"]}]"""
 
-access_token = get_access_token()
-for index, row in df.iterrows():
-    to_read = row["ToRead"]
+def get_front_german_id(row):
+    return f"""r{row["ID"]}"""
+
+def get_front_italian_id(row):
+    return row["ID"]
+
+if __name__ == "__main__":
+    df = pd.read_excel(EXCEL_PATH)
+    df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
+    df.replace('', np.nan, inplace=True)
+    df.dropna(inplace=True)
+    df["ID"] = df["ID"].map(int)
+    df["ToRead"] = df["Italienisch"].map(prepare_for_text_to_speech)
+    df["Filename"] = df["ToRead"].map(get_filename)
     
-    if row["Filename"] == "":
-        continue # was deleted
+    os.makedirs(AUDIO_OUTPUT_FOLDER, exist_ok=True)
 
-    output_file = os.path.join(AUDIO_OUTPUT_FOLDER, row["Filename"])
+    access_token = None
+    for index, row in df.iterrows():
+        to_read = row["ToRead"]
+        # print("ToRead", index, f"\"{to_read}\"")
+        
+        if row["Filename"] == "":
+            continue # was deleted
 
-    if os.path.isfile(output_file):
-        # print(f"Skipping {index} {to_read}")
-        continue
+        output_file = os.path.join(AUDIO_OUTPUT_FOLDER, row["Filename"])
 
-    print(f"Reading {index} {to_read}")
-    text_to_speech(to_read, output_file, access_token, index)
+        if os.path.isfile(output_file):
+            # print(f"Skipping {index} {to_read}")
+            continue
 
-filepath_for_anki_import = "for_anki.csv"
-df_to_export = df.loc[:, ["ID", "Italienisch", "Deutsch", "Filename"]]
-df_to_export.to_csv(filepath_for_anki_import, sep="\t", header=False, index=False)
-print("Finished")
+        print(f"Reading {index} {to_read}")
+        
+        if access_token is None:
+            access_token = get_access_token()
+        
+        text_to_speech(to_read, output_file, access_token, index)
+
+    rows = []
+    for index, row in df.iterrows():
+        rows.append([get_front_italian_id(row), get_italian_card_content(row), get_german_card_content(row)])
+        rows.append([get_front_german_id(row), get_german_card_content(row), get_italian_card_content(row)])
+
+    df_to_export = pd.DataFrame(rows, columns=["ID", "Front", "Back"])
+
+    filepath_for_anki_import = "for_anki.csv"
+    df_to_export.to_csv(filepath_for_anki_import, sep="\t", header=False, index=False)
+    print("Finished")
