@@ -64,20 +64,4 @@ for hc, ids in alreadyThere.items():
 			print(f"\t{ita}    {deu}")
 		dupFound += 1
 
-# for index, row in df.iterrows():
-	# id = int(row["ID"])
-	# ita = row["Italienisch"]
-	# deu = row["Deutsch"]
-
-	# if ita in alreadyThere:
-		# val = alreadyThere[ita]
-	# else:
-		# alreadyThere[ita] = val = list()
-	# val.append(str(id))
-
-# for ita, ids in alreadyThere.items():
-	# if len(ids) > 1:
-		# print(f"Duplicate found: {ita} [{', '.join(ids)}]")
-		# dupFound += 1
-
 print(f"{dupFound} duplicates found")
