@@ -14,17 +14,70 @@ df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
 df.replace('', np.nan, inplace=True)
 df.dropna(inplace=True)
 
-alreadyThere = set()
+
+def hash_meanings(input : str):
+	meanings = [ a.strip() for a in input.split(",") if a.strip() != "" ]
+	
+	total_hash = sum([ hash(m) for m in meanings ])
+	
+	def take_masculin(input : str):
+		# takes both "immalato / immalata" and "der/die Lehrer/in"
+		# immalato / immalata			-> case 1
+		# der/die Lehrer/in				-> case 2
+		# der Lehrer / die Lehrerin		-> case 1
+		
+		# moo = re.match(r"(?<case2>(?> *\w+\/\w+ *)+)|(?<case1>(?> *\w+ *)+\/(?> *\w+ *)+)", input)
+		# if moo is None:
+			# return input
+		# elif moo.group("case1") is not None:
+			# return input.split("/")[0].strip()
+		# elif moo.group("case2") is not None:
+		return input
+		
+	return total_hash
+
+idToValue = dict()
+
+alreadyThere = dict()
 dupFound = 0
 
 for index, row in df.iterrows():
-    id = row["ID"]
-    ita = row["Italienisch"]
-    deu = row["Deutsch"]
+	id = int(row["ID"])
+	ita = row["Italienisch"]
+	deu = row["Deutsch"]
+	
+	idToValue[id] = (ita, deu)
 
-    if ita in alreadyThere:
-        print(f"Duplicate found: {id} {ita} {deu}")
-        dupFound += 1
-    alreadyThere.add(ita)
+	for modifier, lang in enumerate([ita, deu]):
+		modified_hash = hash_meanings(lang) + modifier
+		if modified_hash in alreadyThere:
+			val = alreadyThere[modified_hash]
+		else:
+			alreadyThere[modified_hash] = val = list()
+		val.append(id)
+
+for hc, ids in alreadyThere.items():
+	if len(ids) > 1:
+		print(f"Duplicate found: [{', '.join([str(id) for id in ids])}]")
+		for id in ids:
+			ita, deu = idToValue[id]
+			print(f"\t{ita}    {deu}")
+		dupFound += 1
+
+# for index, row in df.iterrows():
+	# id = int(row["ID"])
+	# ita = row["Italienisch"]
+	# deu = row["Deutsch"]
+
+	# if ita in alreadyThere:
+		# val = alreadyThere[ita]
+	# else:
+		# alreadyThere[ita] = val = list()
+	# val.append(str(id))
+
+# for ita, ids in alreadyThere.items():
+	# if len(ids) > 1:
+		# print(f"Duplicate found: {ita} [{', '.join(ids)}]")
+		# dupFound += 1
 
 print(f"{dupFound} duplicates found")
