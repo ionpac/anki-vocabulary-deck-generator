@@ -90,14 +90,19 @@ def get_front_german_id(row):
     return f"""r{row["ID"]}"""
 
 def get_front_italian_id(row):
-    return row["ID"]
+    return f"""{row["ID"]}"""
 
-def main():
-    df = pd.read_excel(EXCEL_PATH)
+def load_excel(excel_path : str):
+    df = pd.read_excel(excel_path)
     df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
     df.replace('', np.nan, inplace=True)
     df.dropna(inplace=True)
     df["ID"] = df["ID"].map(int)
+
+    return df
+
+def main():
+    df = load_excel(EXCEL_PATH)
     df["ToRead"] = df["Italienisch"].map(prepare_for_text_to_speech)
     df["Filename"] = df["ToRead"].map(get_filename)
     

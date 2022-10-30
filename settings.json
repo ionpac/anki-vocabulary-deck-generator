@@ -1,6 +1,7 @@
 {
     "excel_path": "H:\\My Drive\\ItalienischVokabeln.xlsx",
     "csv_for_anki_import": "for_anki.csv",
+    "anki_export_for_diffing": "Italienisch.txt",
 	"audio_file_output": "%APPDATA%\\Anki2\\User 1\\collection.media",
 	"abbreviations": {
 		"qc.": "qualcosa",
