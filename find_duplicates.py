@@ -36,32 +36,36 @@ def hash_meanings(input : str):
 		
 	return total_hash
 
-idToValue = dict()
+def main():
+	idToValue = dict()
 
-alreadyThere = dict()
-dupFound = 0
+	alreadyThere = dict()
+	dupFound = 0
 
-for index, row in df.iterrows():
-	id = int(row["ID"])
-	ita = row["Italienisch"]
-	deu = row["Deutsch"]
-	
-	idToValue[id] = (ita, deu)
+	for index, row in df.iterrows():
+		id = int(row["ID"])
+		ita = row["Italienisch"]
+		deu = row["Deutsch"]
+		
+		idToValue[id] = (ita, deu)
 
-	for modifier, lang in enumerate([ita, deu]):
-		modified_hash = hash_meanings(lang) + modifier
-		if modified_hash in alreadyThere:
-			val = alreadyThere[modified_hash]
-		else:
-			alreadyThere[modified_hash] = val = list()
-		val.append(id)
+		for modifier, lang in enumerate([ita, deu]):
+			modified_hash = hash_meanings(lang) + modifier
+			if modified_hash in alreadyThere:
+				val = alreadyThere[modified_hash]
+			else:
+				alreadyThere[modified_hash] = val = list()
+			val.append(id)
 
-for hc, ids in alreadyThere.items():
-	if len(ids) > 1:
-		print(f"Duplicate found: [{', '.join([str(id) for id in ids])}]")
-		for id in ids:
-			ita, deu = idToValue[id]
-			print(f"\t{ita}    {deu}")
-		dupFound += 1
+	for hc, ids in alreadyThere.items():
+		if len(ids) > 1:
+			print(f"Duplicate found: [{', '.join([str(id) for id in ids])}]")
+			for id in ids:
+				ita, deu = idToValue[id]
+				print(f"\t{ita}    {deu}")
+			dupFound += 1
 
-print(f"{dupFound} duplicates found")
+	print(f"{dupFound} duplicates found")
+
+if __name__ == "__main__":
+	main()
