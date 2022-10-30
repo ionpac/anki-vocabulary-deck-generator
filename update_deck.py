@@ -92,7 +92,7 @@ def get_front_german_id(row):
 def get_front_italian_id(row):
     return row["ID"]
 
-if __name__ == "__main__":
+def main():
     df = pd.read_excel(EXCEL_PATH)
     df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
     df.replace('', np.nan, inplace=True)
@@ -134,3 +134,6 @@ if __name__ == "__main__":
 
     df_to_export.to_csv(OUTPUT_CSV_PATH_FOR_ANKI, sep="\t", header=False, index=False)
     print("Finished")
+
+if __name__ == "__main__":
+	main()
