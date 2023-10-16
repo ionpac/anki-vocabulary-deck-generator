@@ -7,6 +7,7 @@
 		"qc.": "qualcosa",
 		"qcn.": "qualcuno"
 	},
+	"language_code": "it-IT",
 	"voices": [
 		"it-IT-Wavenet-A", 
 		"it-IT-Wavenet-B", 

@@ -19,13 +19,13 @@ OUTPUT_CSV_PATH_FOR_ANKI = resolve_path(settingsdict["csv_for_anki_import"])
 AUDIO_OUTPUT_FOLDER = resolve_path(settingsdict["audio_file_output"])
 abbreviations = settingsdict["abbreviations"]
 voices = settingsdict["voices"]
-
+language_code = settingsdict["language_code"]
 
 def text_to_speech(text_to_speech_client, input_text : str, output_path : str, voice_id : int):
     voice = voices[voice_id%len(voices)]
 
     synthesis_input = texttospeech.SynthesisInput(text=input_text)
-    voice = texttospeech.VoiceSelectionParams(language_code="it-IT", name=voice)
+    voice = texttospeech.VoiceSelectionParams(language_code=language_code, name=voice)
     audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
 
     response = text_to_speech_client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
