@@ -6,5 +6,11 @@
 	"abbreviations": {
 		"qc.": "qualcosa",
 		"qcn.": "qualcuno"
-	}
+	},
+	"voices": [
+		"it-IT-Wavenet-A", 
+		"it-IT-Wavenet-B", 
+		"it-IT-Wavenet-C", 
+		"it-IT-Wavenet-D"
+	]
 }

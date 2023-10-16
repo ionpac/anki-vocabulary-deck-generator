@@ -18,9 +18,10 @@ EXCEL_PATH = resolve_path(settingsdict["excel_path"])
 OUTPUT_CSV_PATH_FOR_ANKI = resolve_path(settingsdict["csv_for_anki_import"])
 AUDIO_OUTPUT_FOLDER = resolve_path(settingsdict["audio_file_output"])
 abbreviations = settingsdict["abbreviations"]
+voices = settingsdict["voices"]
+
 
 def text_to_speech(text_to_speech_client, input_text : str, output_path : str, voice_id : int):
-    voices = ["it-IT-Wavenet-A", "it-IT-Wavenet-B", "it-IT-Wavenet-C", "it-IT-Wavenet-D"]
     voice = voices[voice_id%len(voices)]
 
     synthesis_input = texttospeech.SynthesisInput(text=input_text)
