@@ -3,15 +3,23 @@
     "csv_for_anki_import": "for_anki.csv",
     "anki_export_for_diffing": "Italienisch.txt",
 	"audio_file_output": "%APPDATA%\\Anki2\\User 1\\collection.media",
+	"audio_file_prefix": "ip_it_ge_",
 	"abbreviations": {
 		"qc.": "qualcosa",
 		"qcn.": "qualcuno"
 	},
-	"language_code": "it-IT",
-	"voices": [
-		"it-IT-Wavenet-A", 
-		"it-IT-Wavenet-B", 
-		"it-IT-Wavenet-C", 
-		"it-IT-Wavenet-D"
-	]
+	"excel_headers": {
+		"id": "ID",
+		"native_language": "Deutsch",
+		"foreign_language": "Italienisch"
+	},
+	"google_text_to_speech": {
+		"language_code": "it-IT",
+		"voices": [
+			"it-IT-Wavenet-A", 
+			"it-IT-Wavenet-B", 
+			"it-IT-Wavenet-C", 
+			"it-IT-Wavenet-D"
+		]
+	}
 }

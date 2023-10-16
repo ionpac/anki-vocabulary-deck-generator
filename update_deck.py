@@ -17,9 +17,14 @@ settingsdict = json.load(open("settings.json", "r"))
 EXCEL_PATH = resolve_path(settingsdict["excel_path"])
 OUTPUT_CSV_PATH_FOR_ANKI = resolve_path(settingsdict["csv_for_anki_import"])
 AUDIO_OUTPUT_FOLDER = resolve_path(settingsdict["audio_file_output"])
+audio_file_prefix = settingsdict["audio_file_prefix"]
 abbreviations = settingsdict["abbreviations"]
-voices = settingsdict["voices"]
-language_code = settingsdict["language_code"]
+voices = settingsdict["google_text_to_speech"]["voices"]
+language_code = settingsdict["google_text_to_speech"]["language_code"]
+
+excel_header_id = settingsdict["excel_headers"]["id"]
+excel_header_native_language = settingsdict["excel_headers"]["native_language"]
+excel_header_foreign_language = settingsdict["excel_headers"]["foreign_language"]
 
 def text_to_speech(text_to_speech_client, input_text : str, output_path : str, voice_id : int):
     voice = voices[voice_id%len(voices)]
@@ -45,32 +50,32 @@ def prepare_for_text_to_speech(text : str):
     return text
 
 def get_filename(input : str):
-    return "ip_it_ge_" + base64.b32encode(hashlib.md5(input.encode("UTF-8")).digest()).decode("ASCII")[:16] + ".mp3"
+    return audio_file_prefix + base64.b32encode(hashlib.md5(input.encode("UTF-8")).digest()).decode("ASCII")[:16] + ".mp3"
 
 def get_german_card_content(row):
-    return row["Deutsch"]
+    return row[excel_header_native_language]
 
 def get_italian_card_content(row):
-    return f"""{row["Italienisch"]} [sound:{row["Filename"]}]"""
+    return f"""{row[excel_header_foreign_language]} [sound:{row["Filename"]}]"""
 
 def get_front_german_id(row):
-    return f"""r{row["ID"]}"""
+    return f"""r{row[excel_header_id]}"""
 
 def get_front_italian_id(row):
-    return f"""{row["ID"]}"""
+    return f"""{row[excel_header_id]}"""
 
 def load_excel(excel_path : str):
     df = pd.read_excel(excel_path)
-    df = df.loc[:,["ID", "Italienisch", "Deutsch"]]
+    df = df.loc[:,[excel_header_id, excel_header_foreign_language, excel_header_native_language]]
     df.replace('', np.nan, inplace=True)
     df.dropna(inplace=True)
-    df["ID"] = df["ID"].map(int)
+    df[excel_header_id] = df[excel_header_id].map(int)
 
     return df
 
 def main():
     df = load_excel(EXCEL_PATH)
-    df["ToRead"] = df["Italienisch"].map(prepare_for_text_to_speech)
+    df["ToRead"] = df[excel_header_foreign_language].map(prepare_for_text_to_speech)
     df["Filename"] = df["ToRead"].map(get_filename)
     
     os.makedirs(AUDIO_OUTPUT_FOLDER, exist_ok=True)
