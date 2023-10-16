@@ -1,6 +1,5 @@
 import os
 import json
-import requests
 import base64
 import pandas as pd
 import hashlib
