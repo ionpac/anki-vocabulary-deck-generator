@@ -21,5 +21,9 @@
 			"it-IT-Wavenet-C", 
 			"it-IT-Wavenet-D"
 		]
+	},
+	"anki": {
+		"front_native_id_prefix": "ge_it_",
+		"front_foreign_id_prefix": "it_ge_"
 	}
 }

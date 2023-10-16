@@ -14,17 +14,18 @@ def resolve_path(path : str):
     return result.stdout.decode("utf-8").strip()
 
 settingsdict = json.load(open("settings.json", "r"))
-EXCEL_PATH = resolve_path(settingsdict["excel_path"])
-OUTPUT_CSV_PATH_FOR_ANKI = resolve_path(settingsdict["csv_for_anki_import"])
-AUDIO_OUTPUT_FOLDER = resolve_path(settingsdict["audio_file_output"])
+excel_path = resolve_path(settingsdict["excel_path"])
+output_csv_path_for_anki = resolve_path(settingsdict["csv_for_anki_import"])
+audio_output_folder = resolve_path(settingsdict["audio_file_output"])
 audio_file_prefix = settingsdict["audio_file_prefix"]
 abbreviations = settingsdict["abbreviations"]
 voices = settingsdict["google_text_to_speech"]["voices"]
 language_code = settingsdict["google_text_to_speech"]["language_code"]
-
 excel_header_id = settingsdict["excel_headers"]["id"]
 excel_header_native_language = settingsdict["excel_headers"]["native_language"]
 excel_header_foreign_language = settingsdict["excel_headers"]["foreign_language"]
+front_native_id_prefix = settingsdict["anki"]["front_native_id_prefix"]
+front_foreign_id_prefix = settingsdict["anki"]["front_foreign_id_prefix"]
 
 def text_to_speech(text_to_speech_client, input_text : str, output_path : str, voice_id : int):
     voice = voices[voice_id%len(voices)]
@@ -52,17 +53,17 @@ def prepare_for_text_to_speech(text : str):
 def get_filename(input : str):
     return audio_file_prefix + base64.b32encode(hashlib.md5(input.encode("UTF-8")).digest()).decode("ASCII")[:16] + ".mp3"
 
-def get_german_card_content(row):
+def get_native_card_content(row):
     return row[excel_header_native_language]
 
-def get_italian_card_content(row):
+def get_foreign_card_content(row):
     return f"""{row[excel_header_foreign_language]} [sound:{row["Filename"]}]"""
 
-def get_front_german_id(row):
-    return f"""r{row[excel_header_id]}"""
+def get_front_native_id(row):
+    return f"""{front_native_id_prefix}{row[excel_header_id]}"""
 
-def get_front_italian_id(row):
-    return f"""{row[excel_header_id]}"""
+def get_front_foreign_id(row):
+    return f"""{front_foreign_id_prefix}{row[excel_header_id]}"""
 
 def load_excel(excel_path : str):
     df = pd.read_excel(excel_path)
@@ -74,11 +75,11 @@ def load_excel(excel_path : str):
     return df
 
 def main():
-    df = load_excel(EXCEL_PATH)
+    df = load_excel(excel_path)
     df["ToRead"] = df[excel_header_foreign_language].map(prepare_for_text_to_speech)
     df["Filename"] = df["ToRead"].map(get_filename)
     
-    os.makedirs(AUDIO_OUTPUT_FOLDER, exist_ok=True)
+    os.makedirs(audio_output_folder, exist_ok=True)
 
     api_client = None
     for index, row in df.iterrows():
@@ -88,7 +89,7 @@ def main():
         if row["Filename"] == "":
             continue # was deleted
 
-        output_file = os.path.join(AUDIO_OUTPUT_FOLDER, row["Filename"])
+        output_file = os.path.join(audio_output_folder, row["Filename"])
 
         if os.path.isfile(output_file):
             # print(f"Skipping {index} {to_read}")
@@ -104,12 +105,12 @@ def main():
 
     rows = []
     for index, row in df.iterrows():
-        rows.append([get_front_italian_id(row), get_italian_card_content(row), get_german_card_content(row)])
-        rows.append([get_front_german_id(row), get_german_card_content(row), get_italian_card_content(row)])
+        rows.append([get_front_foreign_id(row), get_foreign_card_content(row), get_native_card_content(row)])
+        rows.append([get_front_native_id(row), get_native_card_content(row), get_foreign_card_content(row)])
 
     df_to_export = pd.DataFrame(rows, columns=["ID", "Front", "Back"])
 
-    df_to_export.to_csv(OUTPUT_CSV_PATH_FOR_ANKI, sep="\t", header=False, index=False)
+    df_to_export.to_csv(output_csv_path_for_anki, sep="\t", header=False, index=False)
     print("Finished")
 
 if __name__ == "__main__":

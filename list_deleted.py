@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from update_deck import resolve_path
 import numpy as np
-from update_deck import load_excel, get_front_german_id, get_front_italian_id
+from update_deck import load_excel, get_front_native_id, get_front_foreign_id
 
 def get_card_ids_in_anki(anki_export : str):
 	df = pd.read_csv(anki_export, delimiter="\t", header=None)
@@ -15,8 +15,8 @@ def get_ideal_card_ids_in_anki(excel_path : str):
 	df = load_excel(excel_path)
 
 	for _, row in df.iterrows():
-		result.add(get_front_german_id(row))
-		result.add(get_front_italian_id(row))
+		result.add(get_front_native_id(row))
+		result.add(get_front_foreign_id(row))
 	return result
 
 def main():
