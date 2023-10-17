@@ -22,20 +22,6 @@ def hash_meanings(input : str):
 	meanings = [ a.strip() for a in input.split(",") if a.strip() != "" ]
 	
 	total_hash = sum([ hash(m) for m in meanings ])
-	
-	def take_masculin(input : str):
-		# takes both "immalato / immalata" and "der/die Lehrer/in"
-		# immalato / immalata			-> case 1
-		# der/die Lehrer/in				-> case 2
-		# der Lehrer / die Lehrerin		-> case 1
-		
-		# moo = re.match(r"(?<case2>(?> *\w+\/\w+ *)+)|(?<case1>(?> *\w+ *)+\/(?> *\w+ *)+)", input)
-		# if moo is None:
-			# return input
-		# elif moo.group("case1") is not None:
-			# return input.split("/")[0].strip()
-		# elif moo.group("case2") is not None:
-		return input
 		
 	return total_hash
 
