@@ -1,5 +1,5 @@
 {
-    "excel_path": "C:\\Drive\\Italienisch\\ItalienischVokabeln.xlsx",
+    "excel_path": "ItalianVocabulary.xlsx",
     "csv_for_anki_import": "for_anki.csv",
     "anki_export_for_diffing": "Italienisch.txt",
 	"audio_file_output": "%APPDATA%\\Anki2\\User 1\\collection.media",
@@ -10,8 +10,8 @@
 	},
 	"excel_headers": {
 		"id": "ID",
-		"native_language": "Deutsch",
-		"foreign_language": "Italienisch"
+		"native_language": "German",
+		"foreign_language": "Italian"
 	},
 	"google_text_to_speech": {
 		"language_code": "it-IT",
