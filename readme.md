@@ -10,11 +10,11 @@ You also might need to setup a google developer account to use the text to speec
 ## How to use
 
 I recommend to get the example deck running first:
-1. Import SampleDeck.apkg into anki, so you get the Note Type "CardWithID"
-2. Add vocabulary to ItalianVocabulary.xlsx
+1. Import `SampleDeck.apkg` into anki, so you get the Note Type `CardWithID`
+2. Add vocabulary to `ItalianVocabulary.xlsx`
 3. Make sure that the setting `audio_file_output` in settings.json contains the path to your anki media directory
-4. run `update_deck.py`. This should create a file called "for_anki.csv"
-5. Import "for_anki.csv" into the deck SampleDeck. In the import settings, set `Notetype` to `CardWithID` and `Existing Notes` to `update`. The latter makes sure that no duplicates are created for cards with the same ID. The content is updated instead.
+4. run `update_deck.py`. This should create a file called `for_anki.csv`
+5. Import `for_anki.csv` into the deck SampleDeck. In the import settings, set `Notetype` to `CardWithID` and `Existing Notes` to `Update`. The latter makes sure that no duplicates are created for cards with the same ID. The content is updated instead.
 
 ## Configuration
 All settings are editable in settings.json. Most of them should be self explanatory.
