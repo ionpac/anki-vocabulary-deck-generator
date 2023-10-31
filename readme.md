@@ -2,7 +2,7 @@
 Install python. I use version 3.9
 Install python packages by running
 ```
-pip install numpy pandas openpyxl google-cloud-texttospeech
+pip install -r requirements.txt
 ```
 
 You also might need to setup a google developer account to use the text to speech API.
